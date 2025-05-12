@@ -1,16 +1,18 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include <glm/glm.hpp>
 #include <string>
-#include <glm/fwd.hpp>
 
 #include "util/resources.h"
 
 class Shader {
 public:
-    unsigned int ID;
+    unsigned int program;
 
-    Shader(const Resources& vertexGL, const Resources& fragmentGL);
+    Shader(const Resources &vertexGL, const Resources &fragmentGL);
+
+    ~Shader();
 
     void use() const;
 
@@ -25,4 +27,4 @@ public:
     void setMat4(const std::string &name, const glm::mat4 &value) const;
 };
 
-#endif
+#endif // SHADER_H

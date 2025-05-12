@@ -14,6 +14,8 @@ add_executable(ElegantCoral
         src/util/resources.cpp
         src/camera.cpp
         src/shader.cpp
+        src/coral.cpp
+        src/window.cpp
         src/main.cpp
 )
 
