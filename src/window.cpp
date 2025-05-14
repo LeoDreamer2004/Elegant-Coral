@@ -59,16 +59,19 @@ bool Window::init() {
 
 void Window::processKeyboard() {
     static bool EscLastPressed = false;
+    static bool EnterLastPressed = false;
 
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+    auto pressed = [this](int key) { return glfwGetKey(window, key) == GLFW_PRESS; };
+
+    if (pressed(GLFW_KEY_Q)) {
         glfwSetWindowShouldClose(window, true);
-    } else if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS && !EscLastPressed) {
+    } else if (pressed(GLFW_KEY_ESCAPE) && !EscLastPressed) {
         paused = !paused;
         glfwSetInputMode(window, GLFW_CURSOR, paused ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
         if (!paused)
             atFirst = true;
     }
-    EscLastPressed = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+    EscLastPressed = pressed(GLFW_KEY_ESCAPE);
 
     static float deltaTime = 0.0f;
     static float lastFrame = 0.0f;
@@ -77,26 +80,26 @@ void Window::processKeyboard() {
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
-    camera->setSpeedUp(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
-                       glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS);
+    camera->setSpeedUp(pressed(GLFW_KEY_LEFT_CONTROL) || pressed(GLFW_KEY_RIGHT_CONTROL));
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    if (pressed(GLFW_KEY_W) || pressed(GLFW_KEY_UP))
         camera->move(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    if (pressed(GLFW_KEY_S) || pressed(GLFW_KEY_DOWN))
         camera->move(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    if (pressed(GLFW_KEY_A) || pressed(GLFW_KEY_LEFT))
         camera->move(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    if (pressed(GLFW_KEY_D) || pressed(GLFW_KEY_RIGHT))
         camera->move(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    if (pressed(GLFW_KEY_SPACE))
         camera->move(UP, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    if (pressed(GLFW_KEY_RIGHT_SHIFT) || pressed(GLFW_KEY_LEFT_SHIFT))
         camera->move(DOWN, deltaTime);
+    if (pressed(GLFW_KEY_ENTER) && !EnterLastPressed) {
+        coral->grow();
+        renderer->updateBuffers();
+    }
+
+    EnterLastPressed = pressed(GLFW_KEY_ENTER);
 }
 
 void Window::mainLoop() {
